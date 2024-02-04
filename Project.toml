@@ -1,10 +1,13 @@
 name = "SHAKE"
 uuid = "9c8de619-9405-45f5-abce-b523323dfc2f"
 authors = ["Erich Neun <erich-9@gmx.de> and contributors"]
-version = "1.0.0-DEV"
+version = "0.0.1"
+
+[deps]
+SHA = "ea8e919c-243c-51af-8825-aaa63cd721ce"
 
 [compat]
-julia = "1"
+julia = "^1.1"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
