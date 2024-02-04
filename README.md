@@ -11,7 +11,9 @@ Install with the Julia package manager [Pkg](https://pkgdocs.julialang.org/), ju
 ```jl
 pkg> add SHAKE  # Press ']' to enter the Pkg REPL mode.
 ```
+
 or
+
 ```jl
 julia> using Pkg; Pkg.add("SHAKE")
 ```
