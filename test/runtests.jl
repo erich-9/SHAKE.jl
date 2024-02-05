@@ -10,4 +10,6 @@ extract(it, first, length) = collect(take(drop(it, first - 1), length))
 
     @test extract(shake128_xof(b""), 10_000, 10) == hex2bytes("d685d34876d1b9407723")
     @test extract(shake256_xof(b""), 10_000, 10) == hex2bytes("fb9f61d36cc42fbc919e")
+
+    @test extract(shake128_xof(zeros(UInt8, 167)), 10_000, 5) == hex2bytes("a603dfab23")
 end

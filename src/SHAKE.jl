@@ -34,7 +34,6 @@ for n ∈ (128, 256)
             used::Bool = false
         end
 
-        digestlen(::Type{$CTX}) = $d
         blocklen(::Type{$CTX}) = $b
 
         struct $xof <: SHAKE_XOF
