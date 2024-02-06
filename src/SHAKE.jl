@@ -45,6 +45,15 @@ for n ∈ (128, 256)
         $xof_truncated(data::AbstractBytes, length::Integer) =
             collect(UInt8, Iterators.take($xof(data), length))
     end
+
+    for (f, args) ∈ [(xof, []), (xof_truncated, [:(length::Integer)])]
+        args_rhs = [x.args[1] for x ∈ args]
+
+        @eval begin
+            $f(str::AbstractString, $(args...)) = $f(String(str), $(args_rhs...))
+            $f(str::String, $(args...)) = $f(codeunits(str), $(args_rhs...))
+        end
+    end
 end
 
 Base.eltype(::Type{T}) where {T <: SHAKE_XOF} = UInt8
