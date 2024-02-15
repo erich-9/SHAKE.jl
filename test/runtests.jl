@@ -5,7 +5,7 @@ using Test
 extract(it, first, length) = collect(take(drop(it, first - 1), length))
 
 @testset "SHAKE.jl" begin
-    for data ∈ [Vector{UInt8}(), b"", ""]
+    for data ∈ [Vector{UInt8}(), b"", "", SubString("")]
         @test shake128(data, 15) == hex2bytes("7f9c2ba4e88f827d61604550760585")
         @test shake256(data, 15) == hex2bytes("46b9dd2b0ba88d13233b3feb743eeb")
 
