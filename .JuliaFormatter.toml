@@ -2,7 +2,6 @@ always_for_in = true
 for_in_replacement = "∈"
 format_docstrings = true
 format_markdown = true
-import_to_using = true
 normalize_line_endings = "unix"
 remove_extra_newlines = true
 verbose = true
