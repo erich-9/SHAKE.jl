@@ -2,6 +2,7 @@
 
 [![Build Status](https://github.com/erich-9/SHAKE.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/erich-9/SHAKE.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/erich-9/SHAKE.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/erich-9/SHAKE.jl)
+[![Aqua](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 Implementation of the [extendable-output functions](https://en.wikipedia.org/wiki/Extendable-output_function) (XOF's) SHAKE128 and SHAKE256 based on the [SHA-3](https://en.wikipedia.org/wiki/SHA-3) implementation in the Julia Standard Library.
 
