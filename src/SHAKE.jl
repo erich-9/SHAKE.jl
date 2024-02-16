@@ -42,8 +42,19 @@ for n ∈ (128, 256)
 
         shake_ctx(::Type{$xof}) = $CTX
 
-        $xof_truncated(data::AbstractBytes, length::Integer) =
-            collect(UInt8, Iterators.take($xof(data), length))
+        function $xof_truncated(data::AbstractBytes, length::Integer)
+            digest = Vector{UInt8}(undef, length)
+            context = create_context!($CTX, data)
+            s = $b
+            for i ∈ 1:s:length
+                if i + s > length + 1
+                    s = length % $b
+                end
+                permute_blocks!(context)
+                copyto!(digest, i, reinterpret(UInt8, context.state), 1, s)
+            end
+            digest
+        end
     end
 
     for (f, args) ∈ [(xof, []), (xof_truncated, [:(length::Integer)])]
@@ -60,11 +71,7 @@ Base.eltype(::Type{T}) where {T <: SHAKE_XOF} = UInt8
 Base.IteratorSize(::Type{T}) where {T <: SHAKE_XOF} = Base.IsInfinite()
 
 function Base.iterate(shake_xof::T) where {T <: SHAKE_XOF}
-    context = shake_ctx(T)()
-    update!(context, shake_xof.data)
-    init_buffer!(context)
-    update_state_with_buffer!(context)
-    Base.iterate(shake_xof, (1, context))
+    Base.iterate(shake_xof, (1, create_context!(shake_ctx(T), shake_xof.data)))
 end
 
 function Base.iterate(::T, state) where {T <: SHAKE_XOF}
@@ -74,6 +81,14 @@ function Base.iterate(::T, state) where {T <: SHAKE_XOF}
         permute_blocks!(context)
     end
     (reinterpret(UInt8, context.state)[p + 1], (i + 1, context))
+end
+
+function create_context!(::Type{T}, data::AbstractBytes) where {T <: SHAKE_CTX}
+    context = T()
+    update!(context, data)
+    init_buffer!(context)
+    update_state_with_buffer!(context)
+    context
 end
 
 # extracted verbatim from digest! in JuliaCrypto/SHA.jl/src/shake.jl
