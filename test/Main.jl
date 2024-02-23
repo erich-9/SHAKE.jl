@@ -1,5 +1,5 @@
 import Base.Iterators: drop, take
-import SHAKE: shake128, shake128_xof, shake256, shake256_xof
+import SHAKE: shake128, shake128_xof, shake256, shake256_xof, SHAKE128RNG, SHAKE256RNG
 
 extract(it, first, length) = collect(take(drop(it, first - 1), length))
 
@@ -10,6 +10,9 @@ extract(it, first, length) = collect(take(drop(it, first - 1), length))
 
         @test extract(shake128_xof(data), 10_000, 10) == hex2bytes("d685d34876d1b9407723")
         @test extract(shake256_xof(data), 10_000, 10) == hex2bytes("fb9f61d36cc42fbc919e")
+
+        @test rand(SHAKE128RNG(data), UInt8, 5) == hex2bytes("7f9c2ba4e8")
+        @test rand(SHAKE256RNG(data), UInt8, 5) == hex2bytes("46b9dd2b0b")
     end
 
     @test extract(shake128_xof(zeros(UInt8, 167)), 10_000, 5) == hex2bytes("a603dfab23")

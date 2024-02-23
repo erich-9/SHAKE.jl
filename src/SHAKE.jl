@@ -1,7 +1,8 @@
 module SHAKE
 
-export shake128, shake256, shake128_xof, shake256_xof
+export shake128, shake256, shake128_xof, shake256_xof, SHAKE128RNG, SHAKE256RNG
 
+import Random: AbstractRNG
 import SHA:
     blocklen,
     digestlen,
@@ -24,6 +25,7 @@ for n ∈ (128, 256)
 
     xof_truncated = Symbol(:shake, n)
     xof = Symbol(xof_truncated, :_xof)
+    RNG = Symbol(:SHAKE, n, :RNG)
 
     @eval begin
         Base.@kwdef mutable struct $CTX <: SHAKE_CTX
@@ -55,9 +57,27 @@ for n ∈ (128, 256)
             end
             digest
         end
+
+        mutable struct $RNG <: AbstractRNG
+            xof::$xof
+            state::Union{Nothing, Tuple{Int64, $CTX}}
+
+            function $RNG(seed::AbstractVector{UInt8})
+                new($xof(seed), nothing)
+            end
+        end
+
+        function Base.rand(rng::$RNG, ::Type{UInt8})
+            (byte, rng.state) = iterate(rng.xof, rng.state)
+            byte
+        end
+
+        function Base.rand(rng::$RNG, ::Type{UInt8}, n::Integer)
+            [rand(rng, UInt8) for i ∈ 1:n]
+        end
     end
 
-    for (f, args) ∈ [(xof, []), (xof_truncated, [:(length::Integer)])]
+    for (f, args) ∈ [(xof, []), (xof_truncated, [:(length::Integer)]), (RNG, [])]
         args_rhs = [x.args[1] for x ∈ args]
 
         @eval begin
@@ -70,11 +90,11 @@ end
 Base.eltype(::Type{T}) where {T <: SHAKE_XOF} = UInt8
 Base.IteratorSize(::Type{T}) where {T <: SHAKE_XOF} = Base.IsInfinite()
 
-function Base.iterate(shake_xof::T) where {T <: SHAKE_XOF}
+function Base.iterate(shake_xof::T, state::Nothing = nothing) where {T <: SHAKE_XOF}
     Base.iterate(shake_xof, (1, create_context!(shake_ctx(T), shake_xof.data)))
 end
 
-function Base.iterate(::T, state) where {T <: SHAKE_XOF}
+function Base.iterate(::T, state::Tuple{Int, SHAKE_CTX}) where {T <: SHAKE_XOF}
     (i, context) = state
     p = (i - 1) % blocklen(shake_ctx(T))
     if p == 0

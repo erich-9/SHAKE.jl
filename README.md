@@ -22,7 +22,7 @@ julia> using Pkg; Pkg.add("SHAKE")
 
 ## Usage
 
-Loading the package will export `shake128_xof` and `shake256_xof` as well as `shake128` and `shake256`:
+Loading the package will export `shake128_xof` and `shake256_xof` as well as `shake128` and `shake256` and finally also `SHAKE128RNG` and `SHAKE256RNG`:
 
 ```jl
 using SHAKE
@@ -37,6 +37,15 @@ for (i, b) in enumerate(shake256_xof(b"Hash me!"))
         break
     end
 end
+```
+
+The random byte generators `SHAKE128RNG` and `SHAKE256RNG` subtype `AbstractRNG` and can be used as follows:
+
+```jl
+rng = SHAKE128RNG(b"Hash me!")
+
+some_random_bytes = rand(rng, UInt8, 47)
+more_random_bytes = rand(rng, UInt8, 11)
 ```
 
 For convenience, there also are `shake128` and `shake256`, which compute an output of a specified, fixed length:
