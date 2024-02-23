@@ -1,7 +1,7 @@
 name = "SHAKE"
 uuid = "9c8de619-9405-45f5-abce-b523323dfc2f"
 authors = ["Erich Neun <erich-9@gmx.de> and contributors"]
-version = "0.0.2"
+version = "0.0.3"
 
 [deps]
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
